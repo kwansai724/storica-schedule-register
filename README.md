@@ -1,4 +1,4 @@
-# storica-schedule-register
+# staca_schedule_register
 
 ストアカ講座の日程登録を自動化するシステム。
 GAS（Google Apps Script）からのバッチ送信を受け、GitHub Actions上でPlaywrightがストアカに日程を登録する。
@@ -8,11 +8,10 @@ GAS（Google Apps Script）からのバッチ送信を受け、GitHub Actions上
 ```
 Googleフォーム（講師が日程申請）
   ↓
-GAS onFormSubmit（重複チェック → workシートに書き込み）
-  ↓
-GAS 定期バッチ（1時間に1回）
+GAS onFormSubmit（重複チェック → workシートに書き込み → バッチ実行）
   ↓ repository_dispatch
 GitHub Actions（本リポジトリ）
+  → ストアカAPI重複チェック（dedup.ts）
   → Playwrightでストアカに日程登録
   → 結果をGAS webhookにPOST
   ↓
@@ -53,6 +52,7 @@ src/
 ├── auth.ts       … セッションCookie認証
 ├── config.ts     … payload解析・型定義
 ├── register.ts   … Playwright日程登録ロジック
+├── dedup.ts      … 重複日程チェック
 ├── notify.ts     … GAS webhook結果送信
 └── utils.ts      … ログ・遅延・スクリーンショット
 ```
