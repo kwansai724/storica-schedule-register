@@ -38,12 +38,10 @@ jobs:
       - name: Mask sensitive data in payload
         run: |
           for field in emergencyContact teacherName classId teacherId; do
-            echo "$PAYLOAD" | jq -r --arg f "$field" '.schedules[][$f] // empty' | while IFS= read -r v; do
+            jq -r --arg f "$field" '.client_payload.schedules[][$f] // empty' "$GITHUB_EVENT_PATH" | while IFS= read -r v; do
               [ -n "$v" ] && echo "::add-mask::$v"
             done
           done
-        env:
-          PAYLOAD: ${{ toJson(github.event.client_payload) }}
 
       - name: Run registration
         env:
